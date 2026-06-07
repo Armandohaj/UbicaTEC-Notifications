@@ -1,13 +1,16 @@
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, WebSocket, WebSocketDisconnect, Query
-
+from opentelemetry.instrumentation.fastapi import FastAPIInstrumentor
+from app.monitoring import setup_monitoring
 from app.auth import verify_token_ws
 from app.routes.notifications import router as notifications_router
 from app.table_client import ensure_tables
 from app.worker import start_workers, stop_workers
 from app.ws_manager import manager
+from app.middleware.internal_auth import InternalAuthMiddleware
 
+setup_monitoring()
 
 worker_tasks = []
 
@@ -28,6 +31,8 @@ app = FastAPI(
     title="UbicaTEC Notifications Service",
     lifespan=lifespan
 )
+
+app.add_middleware(InternalAuthMiddleware)
 
 app.include_router(
     notifications_router,
