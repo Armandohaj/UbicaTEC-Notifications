@@ -5,11 +5,6 @@ from starlette.responses import JSONResponse
 
 class InternalAuthMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
-        node_env = os.getenv("NODE_ENV", "development")
-
-        if node_env != "production":
-            return await call_next(request)
-
         if request.url.path == "/health":
             return await call_next(request)
 
