@@ -12,7 +12,7 @@ from app.table_client import (
 
 router = APIRouter()
 
-
+@router.get("")
 @router.get("/")
 async def get_notifications(
     unread: bool = Query(default=False),
